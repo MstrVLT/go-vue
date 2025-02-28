@@ -1,11 +1,12 @@
 // worker.js
-import { onScopeDispose, getCurrentScope } from "vue";
+import { ref, onScopeDispose, getCurrentScope, readonly } from "vue";
 import GoWorker from "@/worker?worker";
 import mitt from "mitt";
 
 const resultSymbol = Symbol();
 const emitter = mitt();
 let worker = null
+const workerReady = ref(false)
 
 const initWorker = () => {
     if (worker !== null) return
@@ -16,6 +17,7 @@ const initWorker = () => {
             case "ready":
                 console.log("ready", data);
                 worker.postMessage({ action: "ready", method: null, payload: null });
+                workerReady.value = true
                 break;
             case "result":
                 emitter.emit(resultSymbol, payload);
@@ -40,6 +42,7 @@ export function useWorker() {
             off: offFn,
         };
     };
+
     initWorker()
-    return { call, onResult };
+    return { ready: readonly(workerReady), call, onResult };
 }
