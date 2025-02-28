@@ -7,19 +7,28 @@ const go = new Go();
 let exports;
 
 WebAssembly.instantiateStreaming(responsePromise, go.importObject)
-  .then((result) => {
-    exports = result.instance.exports;
-    go.run(result.instance);
-    postMessage({ action: "ready", payload: null });
-  })
-  .catch((err) => {
-    console.error("Worker failed to load module: ", err);
-  });
+    .then((result) => {
+        exports = result.instance.exports;
+        go.run(result.instance);
+        postMessage({ action: "ready", method: null, payload: null });
+    })
+    .catch((err) => {
+        console.error("Worker failed to load module: ", err);
+    });
 
 onmessage = ({ data }) => {
-  const { action, payload } = data;
-  if (Object.hasOwn(exports, action)) {
-	const res = exports[action]?.apply(this, payload);
-	postMessage({ action, payload: res });
-  }
+    const { action, method, payload } = data;
+    switch (action) {
+        case "call":
+            if (Object.hasOwn(exports, method)) {
+                const res = exports[method]?.apply(this, payload);
+                postMessage({ action: "result", method, payload: res });
+            }
+            break;
+        case "ready":
+            console.log("ready", data);
+            break;
+        default:
+            throw `unknown action '${action}'`;
+    }
 };
