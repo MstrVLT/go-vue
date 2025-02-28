@@ -29,6 +29,6 @@ onmessage = ({ data }) => {
             console.log("ready", data);
             break;
         default:
-            throw `unknown action '${action}'`;
+            console.log("unknown action", action);
     }
 };
