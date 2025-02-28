@@ -7,9 +7,9 @@ const go = new Go();
 let exports;
 
 WebAssembly.instantiateStreaming(responsePromise, go.importObject)
-    .then(async (result) => {
-        exports = result.instance.exports;
-        await go.run(result.instance);
+    .then(async ({ instance }) => {
+        exports = instance.exports;
+        await go.run(instance);
         postMessage({ action: "ready", method: null, payload: null });
     })
     .catch((err) => {
