@@ -2,13 +2,20 @@
 import { ref } from "vue"
 import HelloWorld from "@/components/HelloWorld.vue"
 
-const show = ref(false)
+const show1 = ref(false)
+const show2 = ref(false)
 </script>
 
 <template>
-    <h1>test1</h1>
-    <button @click="show = !show">test1</button>
-    <HelloWorld v-if="show"></HelloWorld>
+    <div class="main">
+        <h1>webassembly in webworker</h1>
+        <div class="container">
+            <button @click="show1 = !show1">test1</button>
+            <button @click="show2 = !show2">test2</button>
+            <HelloWorld v-if="show1"></HelloWorld>
+            <HelloWorld v-if="show2"></HelloWorld>
+        </div>
+    </div>
 </template>
 
 <style scoped>
@@ -25,5 +32,19 @@ const show = ref(false)
 
 .logo.vue:hover {
     filter: drop-shadow(0 0 2em #42b883aa);
+}
+
+.main {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 128px 128px;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px 10px;
 }
 </style>
